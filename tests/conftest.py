@@ -15,11 +15,11 @@ async def client():
         yield ac
 
 @pytest.fixture
-async def get_access_token_for_test(client: AsyncClient):
+async def get_access_token_for_test(test_client: AsyncClient):  # Renamed parameter to test_client
     """
     Provides an access token for authenticated endpoints during tests.
     """
     form_data = {"username": "admin", "password": "secret"}
-    response = await client.post("/auth/token", data=form_data)
+    response = await test_client.post("/auth/token", data=form_data)  # Updated to test_client
     response.raise_for_status()
     return response.json()["access_token"]
