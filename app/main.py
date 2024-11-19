@@ -1,24 +1,21 @@
 from fastapi import FastAPI
 from app.config import QR_DIRECTORY
-from app.routers import qr_code, oauth  # Ensure these imports match your project structure
+from app.routers import qr_code, oauth
 from app.services.qr_service import create_directory
 from app.utils.common import setup_logging
 
-# Set up logging for the application
+# Set up logging
 setup_logging()
 
-# Ensure the directory for storing QR codes exists; create it if it doesn't
+# Ensure QR code directory exists
 create_directory(QR_DIRECTORY)
 
-# Create the FastAPI application instance with metadata
+# Create the FastAPI app
 app = FastAPI(
     title="QR Code Manager",
-    description=(
-        "A FastAPI application for creating, listing, and deleting QR codes. "
-        "It also supports OAuth for secure access."
-    ),
+    description="A FastAPI application for creating, listing, and deleting QR codes with OAuth authentication.",
     version="0.0.1",
-    redoc_url=None,  # Disable ReDoc
+    redoc_url=None,
     contact={
         "name": "API Support",
         "url": "http://www.example.com/support",
@@ -30,6 +27,6 @@ app = FastAPI(
     },
 )
 
-# Include application routers for handling QR code management and OAuth authentication
-app.include_router(qr_code.router, prefix="/qr", tags=["QR Code Management"])
+# Include routers
+app.include_router(qr_code.router, prefix="/qr-codes", tags=["QR Codes"])
 app.include_router(oauth.router, prefix="/auth", tags=["Authentication"])
