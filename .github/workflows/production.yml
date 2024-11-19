@@ -58,11 +58,22 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           push: true
-          tags: ahmeduddinmohammed/devops-demo:${{ github.sha }} # Uses the Git SHA for tagging
-          platforms: linux/amd64,linux/arm64 # Multi-platform support
+          tags: ahmeduddinmohammed/devops-demo:${{ github.sha }}
+          platforms: linux/amd64,linux/arm64
           cache-from: type=registry,ref=ahmeduddinmohammed/devops-demo:cache
           cache-to: type=inline,mode=max
           
+      - name: Authenticate with GitHub Container Registry
+        run: echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Cache Trivy vulnerability database
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/trivy
+          key: ${{ runner.os }}-trivy-db-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-trivy-db-
+
       - name: Scan the Docker image
         uses: aquasecurity/trivy-action@master
         with:
